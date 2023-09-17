@@ -30,50 +30,51 @@ def get_data_as_pandas(name:str):
 # %%
 # Principal
 BIMTRA_train = get_data_as_pandas('bimtra')
-BIMTRA_train.to_parquet(r'dados\BIMTRA_train.parquet', index=False)
+BIMTRA_train.to_excel(r'dados\BIMTRA_train.xlsx', index=False)
 BIMTRA_train.sample(2)
 
 # %%
+# Dados de Síntese Radar
 CAT62_train = get_data_as_pandas('cat-62')
-CAT62_train.to_parquet(r'dados\CAT62_train.parquet', index=False)
+CAT62_train.to_excel(r'dados\CAT62_train.xlsx', index=False)
 CAT62_train.sample(2)
 
 # %%
 # Dados de Quantidades de Esperas em voo por hora
 ESPERAS_train = get_data_as_pandas('esperas')
-ESPERAS_train.to_parquet(r'dados\ESPERAS_train.parquet', index=False)
+ESPERAS_train.to_excel(r'dados\ESPERAS_train.xlsx', index=False)
 ESPERAS_train.sample(2)
 
 # %%
 # Previsão de Dados Meteorológicos em Aeródromos
 METAF_train = get_data_as_pandas('metaf')
-METAF_train.to_parquet(r'dados\METAF_train.parquet', index=False)
+METAF_train.to_excel(r'dados\METAF_train.xlsx', index=False)
 METAF_train.sample(2)
 
 # %%
 # Relatório de Dados Meteorológicos em Aeródromos
 METAR_train = get_data_as_pandas('metar')
-METAR_train.to_parquet(r'dados\METAR_train.parquet', index=False)
+METAR_train.to_excel(r'dados\METAR_train.xlsx', index=False)
 METAR_train.sample(2)
 
 # %%
 # Satélite Meteorológico
 SATELITE_train = get_data_as_pandas('satelite')
-SATELITE_train.to_parquet(r'dados\SATELITE_train.parquet', index=False)
+SATELITE_train.to_excel(r'dados\SATELITE_train.xlsx', index=False)
 SATELITE_train.sample(2)
 
 # %%
-# Previsão de Troca de Cabeceiras de Pista
+# Previsão de Troca de Cabeceiras de Aeródromo
 TC_PREV_train = get_data_as_pandas('tc-prev')
-TC_PREV_train.to_parquet(r'dados\TC_PREV_train.parquet', index=False)
+TC_PREV_train.to_excel(r'dados\TC_PREV_train.xlsx', index=False)
 TC_PREV_train.sample(2)
 
 # %%
-# Previsão de Troca de Cabeceiras de Pista
+# Histórico da Troca de Cabeceiras de Aeródromo
 TC_REAL_train = get_data_as_pandas('tc-real')
-TC_REAL_train.to_parquet(r'dados\TC_REAL_train.parquet', index=False)
+TC_REAL_train.to_excel(r'dados\TC_REAL_train.xlsx', index=False)
 TC_REAL_train.sample(2)
 
 
 
-
+# %%
