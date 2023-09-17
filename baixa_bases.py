@@ -39,7 +39,7 @@ def get_data_as_pandas(name:str):
     return pd.DataFrame(res)
 
 
-def get_data_cat_62(idate='2022-06-01', fdate='2023-01-01', period='15T'):
+def get_data_cat_62(idate='2022-06-01', fdate='2023-01-01', period='30T'):
     
     #URL da API que você deseja acessar
     url = f'http://montreal.icea.decea.mil.br:5002/api/v1/cat-62'
@@ -68,17 +68,21 @@ def get_data_cat_62(idate='2022-06-01', fdate='2023-01-01', period='15T'):
         res = response.json()
 
         data = pd.DataFrame(res)
-        data.dt_radar = pd.to_datetime(data.dt_radar/1000, unit='s')
 
-        data.dt_radar = data.dt_radar.dt.to_period('15T')
+        if len(data) == 0:
+            print(f"No data for {new_idate.strftime('%Y-%m-%d')} | {new_fdate.strftime('%Y-%m-%d')}")
+            continue
+
+        data.dt_radar = pd.to_datetime(data.dt_radar/1000, unit='s')
+        data.dt_radar = data.dt_radar.dt.to_period(period)
         data = data.drop_duplicates(subset='dt_radar')
 
         if i == 0:
-            data.to_csv(rf'dados/CAT62_train_{period}.csv', mode='a', index=False)
+            data.to_csv(rf'dados/CAT62_train_{period}.csv', index=False)
         else:
             data.to_csv(rf'dados/CAT62_train_{period}.csv', mode='a', index=False, header=False)
 
-    final_data = pd.read_csv(rf'../dados/CAT62_train_{period}.csv')
+    final_data = pd.read_csv(rf'dados/CAT62_train_{period}.csv')
 
     return final_data
 
@@ -92,7 +96,7 @@ BIMTRA_train.sample(2)
 
 # %%
 # Dados de Síntese Radar
-CAT62_train = get_data_cat_62(period='15T')
+CAT62_train = get_data_cat_62(period='30T')
 
 # %%
 # Dados de Quantidades de Esperas em voo por hora
