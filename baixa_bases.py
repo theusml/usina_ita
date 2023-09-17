@@ -3,7 +3,8 @@
 
 import requests
 import pandas as pd
-import json
+from datetime import timedelta, datetime
+from tqdm import tqdm
 
 # %%
 def get_data_as_pandas(name:str):
@@ -17,27 +18,81 @@ def get_data_as_pandas(name:str):
     #Seu token de autenticação
     token = 'a779d04f85c4bf6cfa586d30aaec57c44e9b7173'
 
+    if name == 'cat-62':
+        seconds = ' 00:00:00.000'
+    else: 
+        seconds = ''
+
     #Realize a requisição GET
-    response = requests.get(url=url,params={'token':token, 'idate':'2022-06-01', 'fdate':'2023-01-01'})
+    response = requests.get(
+        url=url,
+        params={
+            'token': token, 
+            'idate': '2022-06-01' + seconds, 
+            'fdate': '2023-01-01' + seconds
+            })
+    
     assert response.status_code == 200
 
     res = response.json()
 
     return pd.DataFrame(res)
 
+
+def get_data_cat_62(idate='2022-06-01', fdate='2023-01-01', period='15T'):
+    
+    #URL da API que você deseja acessar
+    url = f'http://montreal.icea.decea.mil.br:5002/api/v1/cat-62'
+
+    #Seu token de autenticação
+    token = 'a779d04f85c4bf6cfa586d30aaec57c44e9b7173'
+
+    idate = datetime.strptime(idate, '%Y-%m-%d')
+    fdate = datetime.strptime(fdate, '%Y-%m-%d')
+    days = (fdate - idate).days
+
+    for i in tqdm(range(days + 1)):
+        new_idate = idate + timedelta(i)
+        new_fdate = idate + timedelta(i+1)
+
+        #Realize a requisição GET
+        response = requests.get(
+            url=url,
+            params={
+                'token': token, 
+                'idate': new_idate.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3], 
+                'fdate': new_fdate.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+                })
+        
+        assert response.status_code == 200
+        res = response.json()
+
+        data = pd.DataFrame(res)
+        data.dt_radar = pd.to_datetime(data.dt_radar/1000, unit='s')
+
+        data.dt_radar = data.dt_radar.dt.to_period('15T')
+        data = data.drop_duplicates(subset='dt_radar')
+
+        if i == 0:
+            data.to_csv(rf'dados/CAT62_train_{period}.csv', mode='a', index=False)
+        else:
+            data.to_csv(rf'dados/CAT62_train_{period}.csv', mode='a', index=False, header=False)
+
+    final_data = pd.read_csv(rf'../dados/CAT62_train_{period}.csv')
+
+    return final_data
+
 # BIMTRA_train
 
 # %%
-# Principal
+# Informações de Movimento de Tráfego Aéreo
 BIMTRA_train = get_data_as_pandas('bimtra')
 BIMTRA_train.to_excel(r'dados\BIMTRA_train.xlsx', index=False)
 BIMTRA_train.sample(2)
 
 # %%
 # Dados de Síntese Radar
-CAT62_train = get_data_as_pandas('cat-62')
-CAT62_train.to_excel(r'dados\CAT62_train.xlsx', index=False)
-CAT62_train.sample(2)
+CAT62_train = get_data_cat_62(period='15T')
 
 # %%
 # Dados de Quantidades de Esperas em voo por hora
