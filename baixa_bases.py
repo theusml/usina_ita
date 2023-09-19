@@ -5,6 +5,7 @@ import requests
 import pandas as pd
 from datetime import timedelta, datetime
 from tqdm import tqdm
+from glob import glob
 
 # %%
 def get_data_as_pandas(name:str):
@@ -86,18 +87,20 @@ def get_data_cat_62(idate='2022-06-01', fdate='2023-01-01', period='30T'):
 
     return final_data
 
-# BIMTRA_train
 
 # %%
-# Informações de Movimento de Tráfego Aéreo
+# spe
 BIMTRA_train = get_data_as_pandas('bimtra')
 BIMTRA_train.to_excel(r'dados\BIMTRA_train.xlsx', index=False)
 BIMTRA_train.sample(2)
 
 # %%
 # Dados de Síntese Radar
-CAT62_train = get_data_cat_62(period='30T')
-
+if len(glob(r'dados\CAT62_train_*.csv')) == 0:
+    CAT62_train = get_data_cat_62(period='30T')
+else:
+    CAT62_train = pd.read_csv(r'dados\CAT62_train_30T.csv')
+CAT62_train.sample(2)
 # %%
 # Dados de Quantidades de Esperas em voo por hora
 ESPERAS_train = get_data_as_pandas('esperas')
