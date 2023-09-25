@@ -58,12 +58,8 @@ y_pred = dummy_model.predict(dados)
 
 #%%
 # Capturando os maiores ofensores
+
 dados['tempo_pred'] = y_pred
 dados['tempo_diff'] = abs(dados.tempo_pred - dados.tempo)
 
-dados.to_parquet(r'dados_dummy_model.parquet', index=False)
-
-dados_piores_scores = dados.sort_values(
-'tempo_diff', ascending=False).head(20)
-dados_piores_scores.to_parquet('piores_scores_modelo_dummy.parquet', index=False)
-# %%
+dados.to_parquet(r'../dados/dados_dummy_model.parquet', index=False)
